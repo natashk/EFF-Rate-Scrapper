@@ -1,0 +1,40 @@
+name: Update data (run scraper.py)
+
+on:
+  schedule:
+    - cron: '30 21 * * *' # Daily at 21:30
+  workflow_dispatch: # allows to run the workflow manually in GitHub Actions tab
+
+jobs:
+  update_rates:
+    name: Update Effective Federal Funds Rates data daily
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # install the python version needed
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+          
+      - name: Run script
+        run: python scraper.py
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add -A
+          git diff-index --quiet HEAD || (git commit -a -m "Updated data" --allow-empty)
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main 
