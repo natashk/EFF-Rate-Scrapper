@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4 # checkout the repository content to github runner
 
       - name: Setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9' # install the python version needed
           cache: 'pip'
@@ -34,7 +34,7 @@ jobs:
           git diff-index --quiet HEAD || (git commit -a -m "Updated data" --allow-empty)
           
       - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main 
